@@ -42,15 +42,17 @@ async def generate_images(image: UploadFile = None, message_hash: str = None):
     image_bytes = await image.read()
     image_pil = Image.open(io.BytesIO(image_bytes))
     image_pil = image_pil.resize((256, 256))
-    image_array = np.array(image_pil)
-    image_tensor = torch.tensor(image_array).permute(2, 0, 1).unsqueeze(0).to(device).float() / 255.0
+    image_pil = image_pil.load()
+
+    # image_array = np.array(image_pil)
+    # image_tensor = torch.tensor(image_array).permute(2, 0, 1).unsqueeze(0).to(device).float() / 255.0
     
     latents = sample_latents(
         batch_size=batch_size,
         model=model,
         diffusion=diffusion,
         guidance_scale=guidance_scale,
-        model_kwargs=dict(images=[image_tensor] * batch_size),
+        model_kwargs=dict(images=[image_pil] * batch_size),
         progress=True,
         clip_denoised=True,
         use_fp16=True,
@@ -85,5 +87,21 @@ async def generate_images(image: UploadFile = None, message_hash: str = None):
     
     return StreamingResponse(generate(), media_type="image/png")
 
+@app.post("/test")
+async def test(image: UploadFile = None, message_hash: str = None):
+    batch_size = 4
+    guidance_scale = 3.0
+
+    # Load the image from UploadFile
+    image_bytes = await image.read()
+    image_pil = Image.open(io.BytesIO(image_bytes))
+    image_pil = image_pil.resize((256, 256))
+    image_array = np.array(image_pil)
+    image_tensor = torch.tensor(image_array).permute(2, 0, 1).unsqueeze(0).to(device).float() / 255.0
+
+    return "success"
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8091)
+
+
