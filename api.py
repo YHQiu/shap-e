@@ -1,5 +1,6 @@
 import io
 import os
+import uvicorn
 from fastapi import FastAPI, UploadFile
 from starlette.responses import StreamingResponse
 from PIL import Image
