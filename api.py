@@ -1,12 +1,25 @@
 import io
+import os
 from fastapi import FastAPI, UploadFile
 from starlette.responses import StreamingResponse
 from PIL import Image
+from shap_e.util.notebooks import decode_latent_mesh
 
 app = FastAPI()
 
+def generate_3d_model(xm, latents, message_hash):
+    save_folder = f'/data/shap_e/3dmodels{message_hash}'
+    os.makedirs(save_folder, exist_ok=True)
+    
+    for i, latent in enumerate(latents):
+        t = decode_latent_mesh(xm, latent).tri_mesh()
+        with open(f'{save_folder}/mesh_{i}.ply', 'wb') as f:
+            t.write_ply(f)
+        with open(f'{save_folder}/mesh_{i}.obj', 'w') as f:
+            t.write_obj(f)
+            
 @app.post("/generate_images")
-async def generate_images(image: UploadFile = None):
+async def generate_images(image: UploadFile = None, message_hash: str = None):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     xm = load_model('transmitter', device=device)
     model = load_model('image300M', device=device)
@@ -47,13 +60,17 @@ async def generate_images(image: UploadFile = None):
     
     # Create a streaming response for the generated images
     def generate():
-        for img in images:
+        for i, img in enumerate(images):
+        if i % 4 == 0:
             img_bytes = io.BytesIO()
             img.save(img_bytes, format='png')
             img_bytes.seek(0)
-            yield img_bytes.getvalue()
+            yield img_bytes.getvalue(), b'image/png'
+
+    # Call the generate_3d_model function
+    generate_3d_model(xm, latents, message_hash)
     
     return StreamingResponse(generate(), media_type="image/png")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8091)
