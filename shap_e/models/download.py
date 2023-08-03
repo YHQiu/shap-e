@@ -154,5 +154,5 @@ def download_models():
         print(f"Downloaded {model_name} model.")
     print("All models downloaded successfully.")
 
-if __main__ == "__name__":
+if __name__ == "__main__":
     download_models()
