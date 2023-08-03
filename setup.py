@@ -31,6 +31,8 @@ setup(
         "numpy",
         "blobfile",
         "clip @ git+https://ghproxy.com/https://github.com/openai/CLIP.git",
+        "fastapi",
+        "uvicorn",
     ],
     author="OpenAI",
 )
