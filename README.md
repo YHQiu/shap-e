@@ -65,7 +65,8 @@ Here are some highlighted samples from our text-conditional model. For random sa
 # Usage
 
 Install with `pip install -e .`.
-conda install pytorch3d -c pytorch3d
+#conda install pytorch3d -c pytorch3d
+pip install 'git+https://ghproxy.com/https://github.com/facebookresearch/pytorch3d.git'
 
 To get started with examples, see the following notebooks:
 

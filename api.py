@@ -42,21 +42,22 @@ async def generate_images(image: UploadFile = File(...), message_hash: str = For
     image_bytes = await image.read()
     image_pil = Image.open(io.BytesIO(image_bytes))
     image_pil = image_pil.resize((256, 256))
+    image_pil.load()
 
     # 写入文件 img_path = /data/shap_e/tmp/{message_hash}.png
-    path = "/data/shap_e/tmp/"
-    os.makedirs(path, exist_ok=True)
-    img_path = f'{path}{message_hash}.png'
-    image_pil.save(img_path)
-
-    image_file = load_image(img_path)
+    # path = "/data/shap_e/tmp/"
+    # os.makedirs(path, exist_ok=True)
+    # img_path = f'{path}{message_hash}.png'
+    # image_pil.save(img_path)
+    #
+    # image_file = load_image(img_path)
 
     latents = sample_latents(
         batch_size=batch_size,
         model=model,
         diffusion=diffusion,
         guidance_scale=guidance_scale,
-        model_kwargs=dict(images=[image_file] * batch_size),
+        model_kwargs=dict(images=[image_pil] * batch_size),
         progress=True,
         clip_denoised=True,
         use_fp16=True,
