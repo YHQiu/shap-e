@@ -147,3 +147,12 @@ def load_model(
     model.load_state_dict(load_checkpoint(model_name, device=device, **kwargs))
     model.eval()
     return model
+
+def download_models():
+    for model_name, model_url in MODEL_PATHS.items():
+        fetch_file_cached(model_url, cache_dir=default_cache_dir())
+        print(f"Downloaded {model_name} model.")
+    print("All models downloaded successfully.")
+
+if __main__ == "__name__":
+    download_models()
