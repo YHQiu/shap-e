@@ -42,8 +42,8 @@ async def generate_images(image: UploadFile = None, message_hash: str = None):
     image_bytes = await image.read()
     image_pil = Image.open(io.BytesIO(image_bytes))
     image_pil = image_pil.resize((256, 256))
-    # image_array = np.array(image_pil)
-    image_tensor = torch.tensor(image_pil).permute(2, 0, 1).unsqueeze(0).to(device).float() / 255.0
+    image_array = np.array(image_pil)
+    image_tensor = torch.tensor(image_array).permute(2, 0, 1).unsqueeze(0).to(device).float() / 255.0
     
     latents = sample_latents(
         batch_size=batch_size,
