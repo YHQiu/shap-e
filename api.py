@@ -75,7 +75,8 @@ async def generate_images(image: UploadFile = File(...), message_hash: str = Non
     
     for i, latent in enumerate(latents):
         decoded_images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
-        images.append(gif_widget(decoded_images))
+        images.append(decoded_images)
+        # images.append(gif_widget(decoded_images))
     
     # Create a streaming response for the generated images
     def generate():
