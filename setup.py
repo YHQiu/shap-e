@@ -37,7 +37,6 @@ setup(
         "pyyaml",
         "python-multipart",
         "blobfile",
-        "pytorch3d",
     ],
     author="OpenAI",
 )
