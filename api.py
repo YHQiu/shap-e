@@ -3,8 +3,7 @@ import os
 import uvicorn
 import torch
 import numpy as np
-from fastapi import FastAPI, UploadFile, File
-from fastapi.params import Form
+from fastapi import FastAPI, UploadFile, File, Form
 from starlette.responses import StreamingResponse, Response
 from PIL import Image
 from shap_e.diffusion.sample import sample_latents
@@ -73,23 +72,16 @@ async def generate_images(image: UploadFile = File(...), message_hash: Form[str]
     
     cameras = create_pan_cameras(size, device)
     images = []
-    
-    for i, latent in enumerate(latents):
-        decoded_images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
-        images.append(gif_widget(decoded_images))
+
+    def generate():
+        for i, latent in enumerate(latents):
+            decoded_images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
+            images.append(gif_widget(decoded_images))
     
     # Create a streaming response for the generated images
-    async def generate():
-        for i, img in enumerate(images):
-            if i % 4 == 0:
-                img_bytes = io.BytesIO()
-                img.save(img_bytes, format='png')
-                img_bytes.seek(0)
-                yield img_bytes.getvalue(), b'image/png'
 
     # Call the generate_3d_model function
     generate_3d_model(xm, latents, message_hash)
-
     return Response("success")
     # return StreamingResponse(generate(), media_type="image/png")
 
