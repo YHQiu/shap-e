@@ -3,7 +3,7 @@ import os
 import uvicorn
 import torch
 import numpy as np
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from starlette.responses import StreamingResponse
 from PIL import Image
 from shap_e.diffusion.sample import sample_latents
@@ -33,7 +33,7 @@ def generate_3d_model(xm, latents, message_hash):
             t.write_obj(f)
             
 @app.post("/generate_images")
-async def generate_images(image: UploadFile = None, message_hash: str = None):
+async def generate_images(image: UploadFile = File(...), message_hash: str = None):
     
     batch_size = 4
     guidance_scale = 3.0
@@ -44,7 +44,9 @@ async def generate_images(image: UploadFile = None, message_hash: str = None):
     image_pil = image_pil.resize((256, 256))
 
     # 写入文件 img_path = /data/shap_e/tmp/{message_hash}.png
-    img_path = f'/data/shap_e/tmp/{message_hash}.png'
+    path = "/data/shap_e/tmp/"
+    os.makedirs(path, exist_ok=True)
+    img_path = f'{path}{message_hash}.png'
     image_pil.save(img_path)
 
     image_file = load_image(img_path)
