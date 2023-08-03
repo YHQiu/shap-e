@@ -61,11 +61,11 @@ async def generate_images(image: UploadFile = None, message_hash: str = None):
     # Create a streaming response for the generated images
     def generate():
         for i, img in enumerate(images):
-        if i % 4 == 0:
-            img_bytes = io.BytesIO()
-            img.save(img_bytes, format='png')
-            img_bytes.seek(0)
-            yield img_bytes.getvalue(), b'image/png'
+            if i % 4 == 0:
+                img_bytes = io.BytesIO()
+                img.save(img_bytes, format='png')
+                img_bytes.seek(0)
+                yield img_bytes.getvalue(), b'image/png'
 
     # Call the generate_3d_model function
     generate_3d_model(xm, latents, message_hash)
