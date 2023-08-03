@@ -33,7 +33,7 @@ def generate_3d_model(xm, latents, message_hash):
             t.write_obj(f)
             
 @app.post("/generate_images")
-async def generate_images(image: UploadFile = File(...), message_hash: Form[str] = None):
+async def generate_images(image: UploadFile = File(...), message_hash: str = Form(None)):
     
     batch_size = 4
     guidance_scale = 3.0
