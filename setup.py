@@ -34,6 +34,7 @@ setup(
         "fastapi",
         "uvicorn",
         "ipywidgets",
+        "pyyaml",
     ],
     author="OpenAI",
 )
