@@ -5,6 +5,11 @@ import torch
 from fastapi import FastAPI, UploadFile
 from starlette.responses import StreamingResponse
 from PIL import Image
+from shap_e.diffusion.sample import sample_latents
+from shap_e.diffusion.gaussian_diffusion import diffusion_from_config
+from shap_e.models.download import load_model, load_config
+from shap_e.util.notebooks import create_pan_cameras, decode_latent_images, gif_widget
+from shap_e.util.image_util import load_image
 from shap_e.util.notebooks import decode_latent_mesh
 
 app = FastAPI()
