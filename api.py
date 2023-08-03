@@ -14,6 +14,8 @@ from shap_e.util.notebooks import decode_latent_mesh
 
 app = FastAPI()
 
+# Pre load model
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 xm = load_model('transmitter', device=device)
 model = load_model('image300M', device=device)
 diffusion = diffusion_from_config(load_config('diffusion'))
@@ -31,7 +33,6 @@ def generate_3d_model(xm, latents, message_hash):
             
 @app.post("/generate_images")
 async def generate_images(image: UploadFile = None, message_hash: str = None):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     batch_size = 4
     guidance_scale = 3.0
