@@ -33,6 +33,7 @@ setup(
         "clip @ git+https://ghproxy.com/https://github.com/openai/CLIP.git",
         "fastapi",
         "uvicorn",
+        "ipywidgets",
     ],
     author="OpenAI",
 )
