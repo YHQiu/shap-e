@@ -16,3 +16,4 @@ uvicorn
 ipywidgets
 pyyaml
 python-multipart
+blobfile
