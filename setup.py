@@ -35,6 +35,7 @@ setup(
         "uvicorn",
         "ipywidgets",
         "pyyaml",
+        "python-multipart",
     ],
     author="OpenAI",
 )
