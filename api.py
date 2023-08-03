@@ -4,6 +4,7 @@ import uvicorn
 import torch
 import numpy as np
 from fastapi import FastAPI, UploadFile, File
+from fastapi.params import Form
 from starlette.responses import StreamingResponse, Response
 from PIL import Image
 from shap_e.diffusion.sample import sample_latents
@@ -33,7 +34,7 @@ def generate_3d_model(xm, latents, message_hash):
             t.write_obj(f)
             
 @app.post("/generate_images")
-async def generate_images(image: UploadFile = File(...), message_hash: str = None):
+async def generate_images(image: UploadFile = File(...), message_hash: Form[str] = None):
     
     batch_size = 4
     guidance_scale = 3.0
