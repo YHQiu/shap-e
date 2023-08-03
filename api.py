@@ -4,7 +4,7 @@ import uvicorn
 import torch
 import numpy as np
 from fastapi import FastAPI, UploadFile, File
-from starlette.responses import StreamingResponse
+from starlette.responses import StreamingResponse, Response
 from PIL import Image
 from shap_e.diffusion.sample import sample_latents
 from shap_e.diffusion.gaussian_diffusion import diffusion_from_config
@@ -75,11 +75,10 @@ async def generate_images(image: UploadFile = File(...), message_hash: str = Non
     
     for i, latent in enumerate(latents):
         decoded_images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
-        images.append(decoded_images)
-        # images.append(gif_widget(decoded_images))
+        images.append(gif_widget(decoded_images))
     
     # Create a streaming response for the generated images
-    def generate():
+    async def generate():
         for i, img in enumerate(images):
             if i % 4 == 0:
                 img_bytes = io.BytesIO()
@@ -89,8 +88,9 @@ async def generate_images(image: UploadFile = File(...), message_hash: str = Non
 
     # Call the generate_3d_model function
     generate_3d_model(xm, latents, message_hash)
-    
-    return StreamingResponse(generate(), media_type="image/png")
+
+    return Response("success")
+    # return StreamingResponse(generate(), media_type="image/png")
 
 @app.post("/test")
 async def test(image: UploadFile = None, message_hash: str = None):
